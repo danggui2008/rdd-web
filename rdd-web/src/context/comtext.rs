@@ -40,13 +40,12 @@ impl<'h, 'req> Context<'h, 'req> {
 
 impl<'h, 'req> Context<'h, 'req> {
     //请求对应执行链条：1）执全局中间件（如果有） 2）分组中间件（如果有）3）节点中间件（如果有）4）路由handler
-    pub fn next(&mut self) {
+     pub fn next(&mut self) {
         self.index += 1;
         let len = self.handlers.len() as i32;
-        let handlers = self.handlers.clone();
         for index in 0..len {
             if index == self.index {
-                if let Some(handler) = handlers.get(index as usize) {
+                if let Some(&handler) = &self.handlers.get(index as usize){
                     handler(self);
                 }
                 //序号+1
