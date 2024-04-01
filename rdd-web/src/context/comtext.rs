@@ -40,18 +40,17 @@ impl<'h, 'req> Context<'h, 'req> {
 
 impl<'h, 'req> Context<'h, 'req> {
     //请求对应执行链条：1）执全局中间件（如果有） 2）分组中间件（如果有）3）节点中间件（如果有）4）路由handler
-     pub fn next(&mut self) {
+    pub fn next(&mut self) {
         self.index += 1;
         let len = self.handlers.len() as i32;
-        for index in 0..len {
-            if index == self.index {
-                if let Some(&handler) = &self.handlers.get(index as usize){
-                    handler(self);
-                }
-                //序号+1
-                self.index += 1;
+        while self.index < len {
+            if let Some(&handler) = &self.handlers.get(self.index as usize){
+                handler(self);
             }
+            //序号+1
+            self.index += 1;
         }
+        
     }
     //完成，主要要中间件中使用，一般在由于特别情况需要提前结束调用链。
     //例如：权限中间件在验证用户权限不足时，不需要再调用下游组件，提前结束调用链。
