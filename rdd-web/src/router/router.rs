@@ -43,7 +43,6 @@ impl Router {
             let parts = utils::parse_pattern(pattern);
             node.insert(pattern, parts, group_id, 0);
             let key = format!("{}_{}", method, pattern);
-            println!("key:{}", key);
             self.handlers.insert(key, Box::new(handler));
         }
     }
